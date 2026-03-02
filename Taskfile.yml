@@ -1,0 +1,71 @@
+---
+version: "3"
+
+vars:
+  MODULES:
+    sh: go work edit -json | jq -r '.Use[].DiskPath'
+
+tasks:
+  test:
+    desc: Run tests for all modules
+    cmds:
+      - for: { var: MODULES }
+        cmd: go test -v -count=1 -race ./{{.ITEM}}/...
+
+  test:one:
+    desc: Run tests for a specific module
+    requires:
+      vars: [MODULE]
+    dir: "{{.MODULE}}"
+    cmd: go test -v -count=1 -race ./...
+
+  lint:
+    desc: Run golangci-lint for all modules
+    cmds:
+      - for: { var: MODULES }
+        cmd: golangci-lint run --config ./.golangci.yml ./{{.ITEM}}/...
+
+  lint:one:
+    desc: Run golangci-lint for a specific module
+    requires:
+      vars: [MODULE]
+    cmd: golangci-lint run --config ./.golangci.yml ./{{.MODULE}}/...
+
+  vet:
+    desc: Run go vet for all modules
+    cmds:
+      - for: { var: MODULES }
+        cmd: go vet ./{{.ITEM}}/...
+
+  vet:one:
+    desc: Run go vet for a specific module
+    requires:
+      vars: [MODULE]
+    dir: "{{.MODULE}}"
+    cmd: go vet ./...
+
+  vuln:
+    desc: Run govulncheck for all modules
+    cmds:
+      - for: { var: MODULES }
+        cmd: cd {{.ITEM}} && govulncheck ./...
+
+  vuln:one:
+    desc: Run govulncheck for a specific module
+    requires:
+      vars: [MODULE]
+    cmd: govulncheck ./{{.MODULE}}/...
+
+  fmt:
+    desc: Run goimports for all modules
+    cmds:
+      - for: { var: MODULES }
+        cmd: golangci-lint fmt ./{{.ITEM}}/...
+
+  check:
+    desc: Run all checks (vet, lint, test)
+    cmds:
+      - task: vet
+      - task: lint
+      - task: vuln
+      - task: test
