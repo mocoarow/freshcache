@@ -1,0 +1,83 @@
+---
+version: "2"
+run:
+  go: "1.25"
+linters:
+  enable:
+    - asasalint
+    - bodyclose
+    - canonicalheader
+    - containedctx
+    - decorder
+    - dupl
+    - dupword
+    - durationcheck
+    - errname
+    - errorlint
+    - exhaustive
+    - exhaustruct
+    - exptostd
+    - fatcontext
+    - forbidigo
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - goheader
+    - gosec
+    - importas
+    - makezero
+    - mirror
+    - misspell
+    - nestif
+    - nilerr
+    - nilnil
+    - noctx
+    - nolintlint
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - predeclared
+    - reassign
+    - revive
+    - rowserrcheck
+    - spancheck
+    - sqlclosecheck
+    - staticcheck
+    - tagliatelle
+    - testifylint
+    - testpackage
+    - thelper
+    - unconvert
+    - whitespace
+    - wrapcheck
+  settings:
+    forbidigo:
+      forbid:
+        - pattern: ^fmt\.Print.*$
+    gocognit:
+      min-complexity: 20
+    gocyclo:
+      min-complexity: 12
+    staticcheck:
+      checks:
+        - all
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - revive
+          - exhaustruct
+      - path: ^examples/
+        linters:
+          - exhaustruct
+          - gosec
+    generated: lax
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
